@@ -4,24 +4,32 @@ class LoginPage {
      */
     constructor(page) {
         this.page = page;
-        this.loginForm = page.locator('form').nth(0);
-        this.emailInput = this.loginForm.locator('input[name="email"]');
-        this.passwordInput = this.loginForm.locator('input[name="password"]');
-        this.loginButton = this.loginForm.getByRole('button', { name: 'Login' });
+        this.loginButtonMicrosoft = page.getByRole('button', { name: 'Continue with Microsoft' });
+        this.microsoftEmailInput = page.getByRole('textbox', {
+            name: 'Enter your email, phone, or Skype.'
+        });
+        this.microsoftNextButton = page.getByRole('button', { name: 'Next' });
+        this.microsoftPasswordInput = page.locator('input[name="passwd"]');
+        this.microsoftSignInButton = page.getByRole('button', { name: 'Sign in' });
+        this.permissionDialog = page.locator('button[type="submit"]');
     }
     async navigate() {
-        await this.page.goto('https://www.automationexercise.com/login');
+        await this.page.goto('https://tinyinvoice.app/login');
     }
 
-    async login(username, password) {
-        await this.emailInput.fill(username);
-        await this.passwordInput.fill(password);
-        await this.loginButton.click();
+    async loginWithMicrosoft(email, password) {
+        await this.loginButtonMicrosoft.click();
+        await this.microsoftEmailInput.fill(email);
+        await this.microsoftNextButton.click();
+        await this.microsoftPasswordInput.fill(password);
+        await this.microsoftSignInButton.click();
     }
 
-    async getErrorMessage() {
-        return await this.loginForm.locator('p').textContent();
+    async acceptPermissionDialog() {
+        await this.permissionDialog.click();
     }
+
+
 }
 
 module.exports = { LoginPage };

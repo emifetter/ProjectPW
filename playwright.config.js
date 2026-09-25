@@ -1,5 +1,8 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
+
+const authFile = path.resolve('playwright/.auth/user.json');
 
 /**
  * Read environment variables from file.
@@ -36,18 +39,29 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'setup',
+      testMatch: /auth\.setup\.js/,
+    },
+
+    {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
+      testMatch: /.*\.(spec|new)\.js/,
+      use: { ...devices['Desktop Chrome'], storageState: authFile },
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      dependencies: ['setup'],
+      testMatch: /.*\.(spec|new)\.js/,
+      use: { ...devices['Desktop Firefox'], storageState: authFile },
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      dependencies: ['setup'],
+      testMatch: /.*\.(spec|new)\.js/,
+      use: { ...devices['Desktop Safari'], storageState: authFile },
     },
 
     /* Test against mobile viewports. */
