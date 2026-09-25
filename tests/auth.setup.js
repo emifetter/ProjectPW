@@ -35,13 +35,24 @@ setup('authenticate with Microsoft', async ({ page }) => {
     }).fill(process.env.MS_EMAIL);
     await page.getByRole('button', { name: 'Next' }).click();
 
-    const passwordOption = page
-        .getByRole('button', { name: /^(Ingresar con contraseña|Use your password)$/i })
-        .or(page.getByRole('link', { name: /^(Ingresar con contraseña|Use your password)$/i }));
-    await passwordOption.click();
-
     const passwordInput = page.locator('input[name="passwd"]');
-    await passwordInput.waitFor({ state: 'visible' });
+    const passwordVisible = await passwordInput
+        .waitFor({ state: 'visible', timeout: 10000 })
+        .then(() => true)
+        .catch(() => false);
+
+    if (!passwordVisible) {
+        const passwordOption = page
+            .getByRole('button', {
+                name: /^(Ingresar con contraseña|Use your password|Use password instead)$/i
+            })
+            .or(page.getByRole('link', {
+                name: /^(Ingresar con contraseña|Use your password|Use password instead)$/i
+            }));
+        await passwordOption.click();
+        await passwordInput.waitFor({ state: 'visible' });
+    }
+
     await passwordInput.fill(process.env.MS_PASSWORD);
     await page.getByRole('button', { name: 'Next', exact: true }).click();
 

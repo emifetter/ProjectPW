@@ -20,7 +20,7 @@ class InvoicePage {
         this.businessEmail = page.locator('#businessDetails\\.email');
         this.businessCurrency = page.getByRole('combobox').filter({ visible: true }).last();
         this.saveBusinessDetails = this.businessDetailsModal.getByRole('button', { name: 'Save', exact: true });
-        this.sendInvoiceButton = page.getByRole('button', { name: 'Send Invoice' }).first();
+        this.sendInvoiceButton = page.getByRole('button', { name: 'Send Invoice', exact: true }).last();
         this.confirmSendButton = page.getByRole('button', { name: 'Send', exact: true });
         this.sentToClientCheckbox = page.getByRole('checkbox', { name: 'Sent to client' });
         this.invoiceErrorMessage = page.getByText('Invoice Error', { exact: true });
