@@ -54,7 +54,15 @@ setup('authenticate with Microsoft', async ({ page }) => {
     }
 
     await passwordInput.fill(process.env.MS_PASSWORD);
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
+    const passwordSubmit = page.getByRole('button', { name: 'Next', exact: true });
+    try {
+        await passwordSubmit.click({ timeout: 15000 });
+    } catch (error) {
+        if (!page.url().startsWith('https://tinyinvoice.app/invoices/new')) {
+            const currentPage = new URL(page.url());
+            throw new Error(`Microsoft no permitió enviar la contraseña en ${currentPage.origin}${currentPage.pathname}. Revisa el contexto de error para detectar una pantalla de verificación, consentimiento o rechazo.`, { cause: error });
+        }
+    }
 
     const staySignedInButton = page.getByRole('button', {
         name: /^(Yes|Sí)$/i
